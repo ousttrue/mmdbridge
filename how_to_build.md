@@ -1,6 +1,8 @@
 # how to build
 vcpkgに依存パッケージのビルドを任せてAlembic込みでビルドする手順を作りました。
 
+* 20180424 更新: Alembicがvcpkgでビルドできるようになったので手順を省略
+
 # 手順
 
 ## vcpkgをsetupする
@@ -14,26 +16,17 @@ vcpkgに依存パッケージのビルドを任せてAlembic込みでビルド�
 コマンドラインの例
 
 ```powershell
-VCPKG_DIR> .\vcpkg.exe install ilmbase:x64-windows pybind11:x64-windows hdf5:x64-windows
+VCPKG_DIR> .\vcpkg.exe install alembic:x64-windows pybind11:x64-windows
 ```
 
-MSMPIがインストールされていない環境だと途中でエラーになります。
-
-ERROR
-```
-    Please install the MSMPI redistributable package before trying to install this port.
-    The appropriate installer has been downloaded to:
-      D:/vcpkg/downloads/MSMpiSetup-8.0.exe
-```
-
-メッセージに書いてある ``VCPKG_DIR/downloads/MSMpiSetup-8.0exe``を手動実行してコマンドを再実行すればインストールできました。権限の問題かと思われます。
+``VCPKG_DIR/installed``以下にビルド成果物が格納されるので以降の手順でこれを利用します。
 
 ```
-VCPKG_DIR
+vcpkg # ここをVCPKG_DIRにする
     installed
         x64-windows
             bin
-                hdf5.dll
+                Alembic.dll
                 python36.dll
                 など
             include
@@ -41,53 +34,32 @@ VCPKG_DIR
             lib
 ```
 
-``VCPKG_DIR/installed``以下にビルド成果物が格納されるので以降の手順でこれを利用します。
 環境変数``VCPKG_DIR``にvcpkgのトップレベルを設定してください。
-
-## Alembic
-[Alembic](https://github.com/alembic/alembic/releases)
-から``alembic-1.7.1``のソースを入手して以下のような階層になるように解凍する。
-
-```
-mmdbridge
-    + cmake_vs2017_64_alembic.bat
-    + alembic-1.7.1
-        + lib
-          + Alembic
-              + CMakeLists.txt # <- これを修正する
-```
-
-vcpkgでビルドしたhdf5に対してリンクがうまくいかず。
-ちょっと``alembic-1.7.1/ilb/Alembic/CMakeLists.txt``を修正した。
-
-```cmake
-ADD_LIBRARY(Alembic ${LIB_TYPE} ${CXX_FILES}) # 51行目
-##############################################################################
-# 下記を追加
-##############################################################################
-IF (USE_HDF5)
-    TARGET_LINK_LIBRARIES(Alembic 
-        ${HDF5_LIBRARIES}
-        )
-    ADD_DEFINITIONS(-DH5_BUILT_AS_DYNAMIC_LIB)
-ENDIF()
-##############################################################################
-# ここまで
-##############################################################################
-```
-
-``cmake_vs2017_64_alembic.bat``を実行してインストールを実行。
-``VCPKG_DIR/installed/x64-windows``にAlembicがインストールされる。
 
 ## DirectX SDK
 
-インストールパスを環境変数``DXSDK_DIR``に設定してください。
+* https://www.microsoft.com/en-us/download/details.aspx?id=6812
+
+``DXSDK_Jun10.exe``
+
+### インストールがエラーになる場合
+* https://support.microsoft.com/en-us/help/2728613/s1023-error-when-you-install-the-directx-sdk-june-2010
+
+### インストール後に環境変数``DXSDK_DIR``を設定してください。
 
 ``C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)``
 
+### DXSDKのヘッダの修正が必要です。
+
 参考
 
-* https://gist.github.com/t-mat/1540248#d3dx9corehを修正
+* https://gist.github.com/t-mat/1540248#d3dx9coreh
+
+を修正
+
+## Python3.6
+
+64ビット版をインストールしてください(CMake実行時にPythonインタープリタが見つからないエラー)
 
 ## MikuMikuDance_x64フォルダの準備
 64bit版のMMDをMikuMikuDance_x64フォルダに展開します。

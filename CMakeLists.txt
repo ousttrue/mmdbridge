@@ -31,7 +31,7 @@ ADD_SUBDIRECTORY(src)
 # additional install files
 INSTALL(FILES 
     ${CMAKE_INSTALL_PREFIX}/bin/python36.dll
-    ${CMAKE_INSTALL_PREFIX}/lib/Alembic.dll
+    ${CMAKE_INSTALL_PREFIX}/bin/Alembic.dll
     ${CMAKE_INSTALL_PREFIX}/bin/hdf5.dll
     ${CMAKE_INSTALL_PREFIX}/bin/imath-2_2.dll
     ${CMAKE_INSTALL_PREFIX}/bin/iex-2_2.dll
