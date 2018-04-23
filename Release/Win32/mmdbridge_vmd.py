@@ -14,7 +14,8 @@ import time
 export_mode = 0
 
 outpath = get_base_path().replace("\\", "/") + "out/"
-texture_export_dir = outpath
+if not os.path.exists(outpath):
+    os.makedirs(outpath)
 start_frame = get_start_frame()
 end_frame = get_end_frame()
 
@@ -29,3 +30,4 @@ if (framenumber >= start_frame or framenumber <= end_frame):
 if (framenumber == end_frame):
 	messagebox("vmd export ended at " + str(framenumber))
 	end_vmd_export()
+
