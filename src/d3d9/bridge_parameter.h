@@ -9,14 +9,15 @@ class BridgeParameter
 {
 public:
 
-	static const BridgeParameter& instance()
+	// singleton
+	static BridgeParameter& instance()
 	{
+		static BridgeParameter parameter;
 		return parameter;
 	}
-	static BridgeParameter& mutable_instance()
-	{
-		return parameter;
-	}
+	// avoid copy
+	BridgeParameter(const BridgeParameter &) = delete;
+	BridgeParameter& operator=(const BridgeParameter &) = delete;
 
 	/// ベースディレクトリ
 	std::wstring base_path;
@@ -25,7 +26,7 @@ public:
 	/// スクリプトパス
 	std::wstring python_script_path;
 	/// スクリプト名
-	std ::wstring python_script_name;
+	std::wstring python_script_name;
 	/// スクリプト名
 	std::vector<std::wstring> python_script_name_list;
 	/// スクリプトパス
@@ -50,7 +51,7 @@ public:
 	std::map<int, int> py_int_map;
 	/// スクリプトからの一時保存値(float)
 	std::map<int, float> py_float_map;
-	
+
 	VertexBufferList finish_buffer_list;
 	RenderBufferMap render_buffer_map;
 
@@ -65,14 +66,11 @@ public:
 private:
 	BridgeParameter() :
 		//script_call_setting(2)
-		 start_frame(0)
+		start_frame(0)
 		, end_frame(100)
 		, frame_width(800)
 		, frame_height(450)
 		, export_fps(30.0)
 		, is_texture_buffer_enabled(false)
 		, is_exporting_without_mesh(false) {}
-	
-	static BridgeParameter parameter;
 };
-

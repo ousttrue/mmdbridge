@@ -146,13 +146,13 @@ namespace
 	/// スクリプトのリロード.
 	bool relaod_python_script()
 	{
-		BridgeParameter::mutable_instance().mmdbridge_python_script.clear();
+		BridgeParameter::instance().mmdbridge_python_script.clear();
 		std::ifstream ifs(BridgeParameter::instance().python_script_path.c_str());
 		if (!ifs) return false;
 		char buf[2048];
 		while (ifs.getline( buf, sizeof(buf))) {
-			BridgeParameter::mutable_instance().mmdbridge_python_script.append(buf);
-			BridgeParameter::mutable_instance().mmdbridge_python_script.append("\r\n");
+			BridgeParameter::instance().mmdbridge_python_script.append(buf);
+			BridgeParameter::instance().mmdbridge_python_script.append("\r\n");
 		}
 		ifs.close();
 		return true;
@@ -165,7 +165,7 @@ namespace
 		
 		GetModuleFileName(NULL, app_full_path, sizeof(app_full_path) / sizeof(TCHAR));
 
-		BridgeParameter& mutable_parameter = BridgeParameter::mutable_instance();
+		BridgeParameter& mutable_parameter = BridgeParameter::instance();
 		std::wstring searchPath = mutable_parameter.base_path;
 		std::wstring searchStr(searchPath + _T("*.py"));
 
@@ -744,19 +744,19 @@ namespace
 
 	bool set_texture_buffer_enabled(bool enabled)
 	{
-		BridgeParameter::mutable_instance().is_texture_buffer_enabled = enabled;
+		BridgeParameter::instance().is_texture_buffer_enabled = enabled;
 		return true;
 	}
 
 	bool set_int_value(int pos, int value)
 	{
-		BridgeParameter::mutable_instance().py_int_map[pos] = value;
+		BridgeParameter::instance().py_int_map[pos] = value;
 		return true;
 	}
 
 	bool set_float_value(int pos, float value)
 	{
-		BridgeParameter::mutable_instance().py_float_map[pos] = value;
+		BridgeParameter::instance().py_float_map[pos] = value;
 		return true;
 	}
 
@@ -764,7 +764,7 @@ namespace
 	{
 		if (BridgeParameter::instance().py_int_map.find(pos) != BridgeParameter::instance().py_int_map.end())
 		{
-			return BridgeParameter::mutable_instance().py_int_map[pos];
+			return BridgeParameter::instance().py_int_map[pos];
 		}
 		return 0;
 	}
@@ -773,7 +773,7 @@ namespace
 	{
 		if (BridgeParameter::instance().py_float_map.find(pos) != BridgeParameter::instance().py_float_map.end())
 		{
-			return BridgeParameter::mutable_instance().py_float_map[pos];
+			return BridgeParameter::instance().py_float_map[pos];
 		}
 		return 0;
 	}
@@ -1236,7 +1236,7 @@ static LRESULT CALLBACK overrideWndProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM l
 static INT_PTR CALLBACK DialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	const BridgeParameter& parameter = BridgeParameter::instance();
-	BridgeParameter& mutable_parameter = BridgeParameter::mutable_instance();
+	BridgeParameter& mutable_parameter = BridgeParameter::instance();
 	HWND hCombo1 = GetDlgItem(hWnd, IDC_COMBO1);
 	HWND hCombo2 = GetDlgItem(hWnd, IDC_COMBO2);
 	HWND hEdit1 = GetDlgItem(hWnd, IDC_EDIT1);
@@ -1355,10 +1355,10 @@ static HRESULT WINAPI present(
 
 	if (pDestRect)
 	{
-		BridgeParameter::mutable_instance().frame_width = pDestRect->right - pDestRect->left;
-		BridgeParameter::mutable_instance().frame_height = pDestRect->bottom - pDestRect->top;
+		BridgeParameter::instance().frame_width = pDestRect->right - pDestRect->left;
+		BridgeParameter::instance().frame_height = pDestRect->bottom - pDestRect->top;
 	}
-	BridgeParameter::mutable_instance().is_exporting_without_mesh = false;
+	BridgeParameter::instance().is_exporting_without_mesh = false;
 	overrideGLWindow();
 	const bool validFrame = IsValidFrame();
 	const bool validCallSetting = IsValidCallSetting();
@@ -1384,7 +1384,7 @@ static HRESULT WINAPI present(
 				}
 			}
 		}
-		BridgeParameter::mutable_instance().finish_buffer_list.clear();
+		BridgeParameter::instance().finish_buffer_list.clear();
 		presentCount++;
 	}
 	HRESULT res = (*original_present)(device, pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
@@ -1496,13 +1496,13 @@ static bool writeBuffersToMemory(IDirect3DDevice9 *device)
 	BYTE *pVertexBuf;
 	IDirect3DVertexBuffer9 *pStreamData = renderData.pStreamData;
 
-	VertexBufferList& finishBuffers = BridgeParameter::mutable_instance().finish_buffer_list;
+	VertexBufferList& finishBuffers = BridgeParameter::instance().finish_buffer_list;
 	if (std::find(finishBuffers.begin(), finishBuffers.end(), pStreamData) == finishBuffers.end())
 	{
 		VertexBuffers::iterator vit = renderData.vertexBuffers.find(pStreamData);
 		if(vit != renderData.vertexBuffers.end())
 		{
-			RenderBufferMap& renderedBuffers = BridgeParameter::mutable_instance().render_buffer_map;
+			RenderBufferMap& renderedBuffers = BridgeParameter::instance().render_buffer_map;
 			pStreamData->lpVtbl->Lock(pStreamData, 0, 0, (void**)&pVertexBuf, D3DLOCK_READONLY);
 
 			// FVF取得
@@ -1629,7 +1629,7 @@ static bool writeMaterialsToMemory(TextureParameter & textureParameter)
 	const int currentObject = ExpGetCurrentObject();
 
 	IDirect3DVertexBuffer9 *pStreamData = renderData.pStreamData;
-	RenderBufferMap& renderedBuffers = BridgeParameter::mutable_instance().render_buffer_map;
+	RenderBufferMap& renderedBuffers = BridgeParameter::instance().render_buffer_map;
 	if (renderedBuffers.find(pStreamData) == renderedBuffers.end())
 	{
 		return false;
@@ -1894,7 +1894,7 @@ static HRESULT WINAPI drawIndexedPrimitive(
 				void *pIndexBuf;
 				if (pIndexData->lpVtbl->Lock(pIndexData, 0, 0, (void**)&pIndexBuf, D3DLOCK_READONLY) == D3D_OK)
 				{
-					RenderBufferMap& renderedBuffers = BridgeParameter::mutable_instance().render_buffer_map;
+					RenderBufferMap& renderedBuffers = BridgeParameter::instance().render_buffer_map;
 					RenderedBuffer &renderedBuffer = renderedBuffers[pStreamData];
 					RenderedSurface &renderedSurface = renderedBuffer.material_map[currentMaterial]->surface;
 					renderedSurface.faces.clear();
@@ -2278,7 +2278,7 @@ bool d3d9_initialize()
 		wchar_t app_full_path[1024];
 		GetModuleFileName(NULL, app_full_path, sizeof(app_full_path) / sizeof(wchar_t));
 		std::wstring path(app_full_path);
-		BridgeParameter::mutable_instance().base_path = path.substr(0, path.rfind(_T("MikuMikuDance.exe")));
+		BridgeParameter::instance().base_path = path.substr(0, path.rfind(_T("MikuMikuDance.exe")));
 	}
 
 	reload_python_file_paths();

@@ -1,6 +1,5 @@
 #include "bridge_parameter.h"
 
-BridgeParameter BridgeParameter::parameter;
 
 const RenderedBuffer& BridgeParameter::render_buffer(int finish_buffer_index) const
 {

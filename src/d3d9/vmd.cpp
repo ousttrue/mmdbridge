@@ -109,7 +109,7 @@ static bool start_vmd_export(
 	int export_mode)
 {
 	VMDArchive &archive = VMDArchive::instance();
-	BridgeParameter::mutable_instance().is_exporting_without_mesh = true;
+	BridgeParameter::instance().is_exporting_without_mesh = true;
 	const BridgeParameter& parameter = BridgeParameter::instance();
 	if (parameter.export_fps <= 0)
 	{
@@ -158,7 +158,7 @@ static bool start_vmd_export(
 static bool end_vmd_export()
 {
 	VMDArchive &archive = VMDArchive::instance();
-	BridgeParameter::mutable_instance().is_exporting_without_mesh = true;
+	BridgeParameter::instance().is_exporting_without_mesh = true;
 	const BridgeParameter& parameter = BridgeParameter::instance();
 	const int pmd_num = ExpGetPmdNum();
 	oguna::EncodingConverter converter;
@@ -389,14 +389,12 @@ static UMVec4d extractQuat(const UMMat44d &mat)
 static bool execute_vmd_export(int currentframe)
 {
 	VMDArchive &archive = VMDArchive::instance();
-	BridgeParameter::mutable_instance().is_exporting_without_mesh = true;
-
-	const BridgeParameter& parameter = BridgeParameter::instance();
+	BridgeParameter::instance().is_exporting_without_mesh = true;
 
 	const int pmd_num = ExpGetPmdNum();
 	oguna::EncodingConverter converter;
 
-	if (currentframe == parameter.start_frame)
+	if (currentframe == BridgeParameter::instance().start_frame)
 	{
 		for (int i = 0; i < pmd_num; ++i)
 		{
@@ -576,7 +574,7 @@ static bool execute_vmd_export(int currentframe)
 		}
 
 
-		if (currentframe == parameter.start_frame)
+		if (currentframe == BridgeParameter::instance().start_frame)
 		{
 			vmd::VmdIkFrame ik_frame;
 			ik_frame.frame = currentframe;
