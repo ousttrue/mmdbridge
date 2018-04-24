@@ -11,7 +11,7 @@ import time
 # 0 = physics + ik
 # 1 = physics only
 # 2 = all (buggy)
-export_mode = 0
+export_mode = 2
 
 outpath = get_base_path().replace("\\", "/") + "out/"
 if not os.path.exists(outpath):
