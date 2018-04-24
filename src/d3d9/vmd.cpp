@@ -83,7 +83,8 @@ public:
 		os.write((const char*)&bone_num, sizeof(bone_num));
 		for (int i = 0; i < bone_num; ++i) {
 			const char* bone_name = ExpGetPmdBoneName(index, i);
-			auto len = strlen(bone_name);
+			int len = strlen(bone_name);
+			os.write((const char*)&len, sizeof(len));
 			os.write(bone_name, len); // cp932
 		}
 
